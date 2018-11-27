@@ -12,9 +12,9 @@ class Ship():
 		self.rect = self.image.get_rect()
 		self.screen_rect = screen.get_rect()
 
-		#Start each new ship at the center of the screen.
+		#Start each new ship at the center bottom of the screen.
 		self.rect.centerx = self.screen_rect.centerx
-		self.rect.bottom = self.screen_rect.bottom
+		self.rect.centery = self.screen_rect.bottom - self.rect.height/2
 
 		# Store a decimal value for ship's center.
 		self.centerx = float(self.rect.centerx)
@@ -43,6 +43,11 @@ class Ship():
 			self.rect.centery = self.centery
 		if self.moving_left or self.moving_right:
 			self.rect.centerx = self.centerx
+
+	def center_ship(self):
+		"""Center the ship on the screen"""
+		self.centerx = self.screen_rect.centerx
+		self.centery = self.screen_rect.bottom - self.rect.height/2
 
 
 	def blitme(self):
