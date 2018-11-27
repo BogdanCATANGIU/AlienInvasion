@@ -1,7 +1,9 @@
 import sys
 import pygame
 from bullet import Bullet
-from alien import Alien 
+from alien import Alien
+from star import Star
+from random import randint
 
 def check_keydown_events(event, ai_settings, screen, ship, bullets):
 	"""Respond to key presses."""
@@ -40,10 +42,12 @@ def check_events(ai_settings, screen, ship, bullets):
 		elif event.type == pygame.KEYUP:
 			check_keyup_events(event, ship)
 				
-def update_screen(ai_settings, screen, ship, aliens, bullets):
+def update_screen(ai_settings, screen, ship, aliens, bullets, stars):
 	"""Update images on the screen and flip to the new screen."""
 	# Redraw the screen during each pass through the loop
 	screen.fill(ai_settings.bg_color)
+
+	stars.draw(screen)
 
 	# Redraw all bullets behind ship and aliens.
 	for bullet in bullets.sprites():
@@ -127,3 +131,38 @@ def update_aliens(ai_settings, aliens):
 	"""
 	check_fleet_edges(ai_settings, aliens)
 	aliens.update()
+
+def get_number_stars_x(ai_settings, star_width):
+	"""Determine the number of stars that fit in a row"""
+	available_space_x = ai_settings.screen_width - 2 * star_width
+	number_stars_x = int(available_space_x / (2 * star_width))
+	return number_stars_x
+
+def get_number_rows_star(ai_settings, star_height):
+	"""Determine the number of rows of stars that fit the screen"""
+	available_space_y = ai_settings.screen_height - 2 * star_height
+	number_rows = int(available_space_y / (2 * star_height))
+	return number_rows
+
+def create_star(screen, stars, star_number, row_number):
+	"""Create an alien and place it in the row."""
+	star = Star(screen)
+	star_width = star.rect.width
+	random_number = randint(-15, 15)
+	star.x = star_width + random_number * star_width * star_number
+	star.rect.x = star.x
+	star.rect.y = star.rect.height + random_number * star.rect.height * row_number
+	stars.add(star)
+
+
+def create_grid(ai_settings, screen, stars):
+	"""Create a ful grid of stars"""
+	# Create a star and find the number of stars in a row.
+	star = Star(screen)
+	number_stars_x = get_number_stars_x(ai_settings, star.rect.width)
+	number_rows = get_number_rows_star(ai_settings, star.rect.height)
+	
+	# Create the first row of stars.
+	for row_number in range(number_rows):
+		for star_number in range(number_stars_x):
+			create_star(screen, stars, star_number, row_number)
